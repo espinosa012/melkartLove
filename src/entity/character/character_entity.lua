@@ -11,12 +11,11 @@ end
 
 function CharacterEntity.loadSprite(self, imagePath)
     self.sprite = Sprite(imagePath, 0, 0)
-    
 end
 
 
 function CharacterEntity.update(self, dt)
-   
+
 end
 
 

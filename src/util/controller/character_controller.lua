@@ -21,11 +21,9 @@ end
 
 function CharacterController.selectCharacter(self, characterIndex)
 	self.selectedCharacter = self.availableCharacters[characterIndex + 1]
-	self.selectedCharacter.sprite:setDrawMode("fill")
 end
 
 function CharacterController.clearSelection(self)
 	if self.selectedCharacter ~= nil then
-		self.selectedCharacter.sprite:setDrawMode("line")		
 	end
 end

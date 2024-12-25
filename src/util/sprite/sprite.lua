@@ -3,7 +3,8 @@ require "util/data/color"
 Sprite = Object.extend(Object)	-- TODO no se si debe heredar de aqui...
 
 function Sprite.new(self, imagePath, posX, posY)
-	self:loadImage(imagePath, nil)
+	self.image = nil
+	self.collisionBox = nil
 	self.posX = posX
 	self.posY = posY
 	self.scaleX = 1
@@ -12,20 +13,17 @@ function Sprite.new(self, imagePath, posX, posY)
 	self.originOffsetY = 0
 	self.shearingX = 0
 	self.shearingY = 0
-
 	self.rotation = 0
-
 	self.color = nil
-
-	self.drawMode = "line"
-end
-
-function Sprite.setDrawMode(self, drawMode)
-	self.drawMode = drawMode
+	self:loadImage(imagePath, nil)
 end
 
 function Sprite.loadImage(self, imagePath, settings)
 	self.image = love.graphics.newImage(imagePath)
+end
+
+function Sprite.setCollisionBox()
+	
 end
 
 function Sprite.rotate(r)
