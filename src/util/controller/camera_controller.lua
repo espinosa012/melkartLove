@@ -1,5 +1,5 @@
 --! file: camera_controller.lua
-require("util/camera/camera")
+require("src/util/camera/camera")
 CameraController = Object.extend(Object)
 
 

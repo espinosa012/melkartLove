@@ -1,12 +1,12 @@
 --! file: character.lua
-require "entity/base_entity"
-require "util/sprite/sprite"
+require "src/entity/base_entity"
+require "src/util/sprite/sprite"
 CharacterEntity = Object.extend(BaseEntity)
 
 
 function CharacterEntity.new(self, posX, posY)
     self.sprite = nil
-    self:loadSprite("res/bread.png")
+    self:loadSprite("resources/bread.png")
 end
 
 function CharacterEntity.loadSprite(self, imagePath)

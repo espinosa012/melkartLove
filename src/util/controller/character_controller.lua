@@ -1,5 +1,5 @@
 --! file: character_controller.lua
-require "util/data/list"
+require "src/util/data/list"
 CharacterController = Object.extend(Object)
 
 function CharacterController.new(self)

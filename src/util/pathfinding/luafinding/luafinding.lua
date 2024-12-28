@@ -1,6 +1,6 @@
 -- Positions must be a table (or metatable) where table.x and table.y are accessible.
-local Vector = require( "util/pathfinding/luafinding/vector" )
-local Heap = require( "util/pathfinding/luafinding/heap" )
+local Vector = require( "src/util/pathfinding/luafinding/vector" )
+local Heap = require( "src/util/pathfinding/luafinding/heap" )
 
 Luafinding = {}
 Luafinding.__index = Luafinding

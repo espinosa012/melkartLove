@@ -1,6 +1,6 @@
 --! file: astar.lua
-require "util/pathfinding/luafinding/luafinding"
-require "util/pathfinding/luafinding/vector"
+require "src/util/pathfinding/luafinding/luafinding"
+require "src/util/pathfinding/luafinding/vector"
 AStar = Object.extend(Object)
 
 
@@ -31,5 +31,7 @@ end
 
 function AStar.getPath(self, startX, startY, finishX, finishY)
     return Luafinding( Vector(startX, startY), Vector(finishX, finishY), self.map ):GetPath()
+    -- TODO: igual conviene tener una única instancia de Luafinding para todos los gameObjects que hagan uso de él, aunque igual tendría 
+    -- que ser demasiado grande... o considerar el chunk que estemos mostrando y actualizar cuando cambiemos del check.
 end
 

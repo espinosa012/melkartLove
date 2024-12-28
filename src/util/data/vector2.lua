@@ -1,4 +1,4 @@
---! file: vector.lua
+--! file: vector2.lua
 local Vector2 = {}
 Vector2.__index = Vector2
 

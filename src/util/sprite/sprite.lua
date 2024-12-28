@@ -1,5 +1,5 @@
 --! file: sprite.lua
-require "util/data/color" 
+require "src/util/data/color" 
 Sprite = Object.extend(Object)	-- TODO no se si debe heredar de aqui...
 
 function Sprite.new(self, imagePath, posX, posY)
