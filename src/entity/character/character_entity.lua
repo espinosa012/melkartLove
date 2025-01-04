@@ -1,6 +1,6 @@
---! file: character.lua
-require "src/entity/base_entity"
-require "src/util/sprite/sprite"
+--! file: character_state_machine.lua
+require "src.entity.base_entity"
+require "src.util.sprite.sprite"
 require "src.util.statemachine.character_state_machine"
 CharacterEntity = Object.extend(BaseEntity)
 
@@ -26,9 +26,12 @@ function CharacterEntity.loadStateMachine(self)
     self.state_machine = CharacterStateMachine()
 end
 
+function CharacterEntity.getStateMachine(self)
+    return self.state_machine
+end
+
 function CharacterEntity.update(self, dt)
     -- TODO controlar la máquina de estados, etc. Esto debería ir en el controller
-
 end
 
 
