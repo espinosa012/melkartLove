@@ -2,10 +2,9 @@
 require "src/util/data/list"
 CharacterController = Object.extend(Object)
 
---TODO: hay que hacer la clase madre de los controladores, para los métodos de teclas, ratón, eventos, etc
---TODO: igual este módulo no tend'ria que estar en util, sino en una carpeta controller fuera, y dejar en util la clase madre
-
--- TODO: usar cámara de hump
+--	TODO: hay que hacer la clase madre de los controladores, para los métodos de teclas, ratón, eventos, etc
+--	TODO: igual este módulo no tend'ria que estar en util, sino en una carpeta controller fuera, y dejar en util la clase madre
+-- 	TODO: usar cámara de hump
 
 function CharacterController.new(self)
 	self.availableCharacters = {}
@@ -16,23 +15,35 @@ function CharacterController.addCharacter(self, entity)
 	table.insert(self.availableCharacters, entity)
 end
 
+function CharacterController.update(self, dt)
+	if self:isCharacterSelected() ~= true then return end
+	print(self.selectedCharacter.state_machine.currentState)
+	if self.selectedCharacter.state_machine.currentState == "MOVING" then
+		self:translateCharacterAlongPath(self.selectedCharacter)
+	end
+end
+
 function CharacterController.onKeyPressed(self, key)
 	if key == "1" then self:selectCharacter(0) end
 	if key == "escape" then self:clearSelection() end
 
-	if key == "up" then self:manualCharacterMoving(Vector(0, -1)) end
-	if key == "down" then self:manualCharacterMoving(Vector(0, 1)) end
-	if key == "right" then self:manualCharacterMoving(Vector(1, 0)) end
-	if key == "left" then self:manualCharacterMoving(Vector(-1, 0)) end
+	if self.selectedCharacter ~= nil then
+		if key == "up" then self:manualCharacterMoving(Vector(0, -1)) end
+		if key == "down" then self:manualCharacterMoving(Vector(0, 1)) end
+		if key == "right" then self:manualCharacterMoving(Vector(1, 0)) end
+		if key == "left" then self:manualCharacterMoving(Vector(-1, 0)) end
+	end
 end
 
 function CharacterController.onMousePressed(self, mouseBtn, cameraPosition, cameraScale)
 	-- TODO: si tenemos personaje seleccionado, lo movemos a la posición del tilemap correspondiente
+	if not self:isCharacterSelected() then return end
+
 	if mouseBtn == 1 then
 		local mouseX, mouseY = love.mouse.getPosition()
-		local clickedWorldPos = _G.tileMap:worldToMapPosition(mouseX * cameraScale.x + cameraPosition.x, 
+		local clickedWorldPosX, clickedWorldPosY = _G.tileMap:worldToMapPosition(mouseX * cameraScale.x + cameraPosition.x, 
 			mouseY * cameraScale.y + cameraPosition.y)
-		self:moveToWorldPosition(clickedWorldPos.x, clickedWorldPos.y)
+		self:setCharacterPath(self.selectedCharacter, clickedWorldPosX, clickedWorldPosY)
 	end
 end
 
@@ -42,78 +53,59 @@ function CharacterController.selectCharacter(self, characterIndex)
 end
 
 function CharacterController.clearSelection(self)
-	if self.selectedCharacter ~= nil then
-		self.selectedCharacter = nil
-		print("Selection cleared")
-	end
+	self.selectedCharacter = nil
+	print("Selection cleared")
 end
 
 function CharacterController.isCharacterSelected(self)
 	return  self.selectedCharacter ~= nil
 end
 
--- no sé si va aquí...
-function CharacterController.moveToWorldPosition(self, x, y)
+function CharacterController.isValidPath(self, path)
+	return self.selectedCharacter.state_machine.path ~= nil and #path > 0 and path[1] ~= nil
+end
+
+function CharacterController.setCharacterPath(self, character, targetX, targetY)
     -- TODO usando los métodos del tilemap y el setPosition del personaje seleccionado.
-	if self:isCharacterSelected() then
-		local characterPosition = self.selectedCharacter:getPosition()
-		local characterWorldPosition = _G.tileMap:worldToMapPosition(characterPosition.x, characterPosition.y)
-		local targetPos = _G.tileMap:mapToWorldPosition(x, y) 
-		local targetWorldPos = _G.tileMap:worldToMapPosition(targetPos.x, targetPos.y) -- TODO: comprobar que targetWorldPos está dentro del mundo
-		
-		self:followPath(self.selectedCharacter, 
-			_G.astar:getPath(characterWorldPosition.x, characterWorldPosition.y, targetWorldPos.x, targetWorldPos.y))
-		
-		-- self.selectedCharacter:setPosition(targetPos.x, targetPos.y)
+	-- if self:isCharacterSelected() ~= true then return end
+	if character == nil then return end
 
-	end
+	local characterMapPositionX, characterMapPositionY = _G.tileMap:worldToMapPosition(self.selectedCharacter:getPosition())
+	local targetMapPosX, targetMapPosY = _G.tileMap:worldToMapPosition(_G.tileMap:mapToWorldPosition(targetX, targetY)) -- TODO: comprobar que targetWorldPos está dentro del mundo
+
+	-- Asignamos el path del personaje
+	self.selectedCharacter.state_machine.path = _G.astar:getPath(characterMapPositionX, characterMapPositionY, targetMapPosX, targetMapPosY)
+	self.selectedCharacter.state_machine:setState("MOVING")	-- en función de la dirección en que nos movamos, el estado será uno u otro.
 end
 
-function CharacterController.followPath(self, character, path)
-	-- TODO. para movimiento basado en tiles.
-	local speed = 0.8
-	local nextPosReachedDist = 3	-- en pixeles
-	local nextDirection = nil
-	local characterPosition = nil
-	local characterWorldPosition = nil
-	local nextPosition = nil
+function CharacterController.translateCharacterAlongPath(self, character)
+	-- vamos al índice siguiente al que nos encontremos.
+	if not self:isValidPath(self.selectedCharacter.state_machine.path) then return end
 
-	for i = 1, #path do
-		nextPosition = tileMap:mapToWorldPosition(path[i].x, path[i].y)
-		characterPosition = self.selectedCharacter:getPosition()
-		characterWorldPosition = _G.tileMap:worldToMapPosition(characterPosition.x, characterPosition.y)	
+	local characterPosX, characterPosY, characterMapPosX, characterMapPosY, currentPathPosition
+	for index, value in ipairs(self.selectedCharacter.state_machine.path) do
+		characterPosX, characterPosY = character:getPosition()
+		characterMapPosX, characterMapPosY = _G.tileMap:worldToMapPosition(characterPosX, characterPosY)
 
-		nextDirection = Vector(nextPosition.x - characterWorldPosition.x, nextPosition.y - characterWorldPosition.y)
-		-- TODO: crear una función que vaya recorriendo todas las casillas del path una por una, a una determiada velocidad
-		while self:getDistance(self.selectedCharacter:getPosition(), nextPosition) > nextPosReachedDist do 
-			self:pushCharacter(self.selectedCharacter, nextDirection, speed)
+		if value.x == characterMapPosX and value.y == characterMapPosY then
+			currentPathPosition = index + 1
+			break
 		end
-		-- mientras la distancia entre la posición del personaje y la nextPosition sea menor 
-		-- que nextPosReachedDist, seguimos avanzando en la dirección correspondiente. cuando
-		-- deje de serlo, pasarmos a la siguiente interación del for
-		
-		-- while true do
-		-- 	characterPosition = self.selectedCharacter:getPosition()
-		-- 	characterWorldPosition = _G.tileMap:worldToMapPosition(characterPosition.x, characterPosition.y)	
-		-- end
-		
-		-- nextDirection = Vector(nextPosition.x - characterWorldPosition.x, nextPosition.y - characterWorldPosition.y)
-		-- character:setPosition(nextPosition.x, nextPosition.y)
+	end
+	
+	if #self.selectedCharacter.state_machine.path < currentPathPosition then
+		-- TODO: indicamos a la máquina de estado que volvemos a estar parados
+		self.selectedCharacter.state_machine:setState("IDLE")
+	else
+		local targetPositionX, targetPositionY = _G.tileMap:mapToWorldPosition(self.selectedCharacter.state_machine.path[currentPathPosition].x, 
+		self.selectedCharacter.state_machine.path[currentPathPosition].y) 
+		character:setPosition(targetPositionX, targetPositionY)
 	end
 end
 
-function CharacterController.getDistance(self, p1, p2)
-	return math.sqrt(math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y))
-end
-
-function CharacterController.manualCharacterMoving(self, movementDirection)	-- movementDirection puede ser UP, DOWM, LEFT, RIGHT, DOWN_LEFT, DOWN_RIGHT, TOP_LEFT, TOP_RIGHT, llevar a un enum o algo
-	if self.selectedCharacter == nil then return end
-	self:pushCharacter(self.selectedCharacter, movementDirection, worldCellSize.x)
-end
-
-function CharacterController.pushCharacter(self, character, movementDirection, speed) -- TODO: el nombre del método no es el mejor...
-	-- TODO: restringir el movimiento a los límites del mapa
-	local currentCharacterPosition = character:getPosition()
-	character:setPosition(currentCharacterPosition.x + movementDirection.x * speed, currentCharacterPosition.y +
-			movementDirection.y * speed)
+function CharacterController.manualCharacterMoving(self, movementDirection)	
+	local speed = worldCellSize.x
+	local currentCharacterPosition = self.selectedCharacter:getPositionV()
+	self.selectedCharacter:setPosition(currentCharacterPosition.x + movementDirection.x * speed,
+		currentCharacterPosition.y + movementDirection.y * speed)
 end

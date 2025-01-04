@@ -14,7 +14,6 @@ function TileMap.new(self, mapSize, tileSize)
     self.cells = {}
 
     self.mapSpriteBatch = nil -- la propia imagen del mapa
-
 end
 
 --#region    love2d functions
@@ -72,12 +71,18 @@ function TileMap.setCell(self, x, y, cell)
 end
 
 
--- todo: para traducir coordenadas, en ambos sentidos
 function TileMap.mapToWorldPosition(self, x, y)
-    -- devolvemos el topleft de la casilla en función de tileSize,x e y 
+    return self.position.x + x * self.tileSize.x, self.position.y + y * self.tileSize.y
+end
+
+function TileMap.mapToWorldPositionV(self, x, y)
     return Vector(self.position.x + x * self.tileSize.x, self.position.y + y * self.tileSize.y)
 end
 
 function TileMap.worldToMapPosition(self, x, y)
+    return math.floor(x / self.tileSize.x), math.floor(y / self.tileSize.y)
+end
+
+function TileMap.worldToMapPositionV(self, x, y)
     return Vector(math.floor(x / self.tileSize.x), math.floor(y / self.tileSize.y))
 end

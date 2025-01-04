@@ -20,11 +20,10 @@ local cameraController = CameraController()
 
 -- TODO igual podriamos hacer globales todas estas 
 _G.tileMap = TileMap(worldSize, worldCellSize)
-_G.astar = Jumper(worldSize.x, worldSize.y) -- tODO: debería revargarse con cada chunk o algo así
+_G.astar = Jumper(worldSize.x, worldSize.y) -- tODO: debería revargarse con cada chunk Wo algo así
 
 
-local testCharacter = CharacterEntity(128, 64)
-
+local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0)) 
 
 
 function love.load()
@@ -33,7 +32,7 @@ function love.load()
 end
 
 function love.update(dt)
-    testCharacter:update(dt)
+    characterController:update(dt)    -- TODO: no hay que actualizar los personajes individualmente, sino el manager, controller o como lo hagamos
     tileMap:update(dt)
 end
 

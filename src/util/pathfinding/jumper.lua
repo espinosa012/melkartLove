@@ -43,14 +43,12 @@ function Jumper.getPath(self, startx, starty, endx, endy)
     local path = self.finder:getPath(startx, starty, endx, endy)
     local toReturn = {}
     if path then
-        -- print(('Path found! Length: %.2f'):format(path:getLength()))
           for node, count in path:nodes() do    -- TODO se podría hacer más eficiente mirando el código de la librería
             table.insert(toReturn, {x = node:getX(), y = node:getY()})
-            -- print(('Step: %d - x: %d - y: %d'):format(count, node:getX(), node:getY()))
           end
       end
+    --   table.remove(toReturn, 1)
     return toReturn
-    -- return path--:nodes()
 end
 
 
