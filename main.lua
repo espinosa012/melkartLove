@@ -6,17 +6,26 @@ require("src/entity/character/character_entity")
 require("src/util/controller/character_controller")
 require("src/util/controller/camera_controller")
 require("src/util/pathfinding/astar")
+require("src/util/pathfinding/jumper")
 require("src/util/tilemap/tilemap")
+
+
+_G.worldSize =  Vector(512, 512)
+_G.worldCellSize = Vector(16, 16)    -- para casillas del tilemap, movimiento, etc.
 
 local sceneObjects = {} -- almacenamos los distintos objetos de la escena (personajes, npcs, items, etc)
 local characterController = CharacterController()
 local cameraController = CameraController()
 
+
+-- TODO igual podriamos hacer globales todas estas 
+_G.tileMap = TileMap(worldSize, worldCellSize)
+_G.astar = Jumper(worldSize.x, worldSize.y) -- tODO: debería revargarse con cada chunk o algo así
+
+
 local testCharacter = CharacterEntity(128, 64)
 
-local astar = AStar(512, 512)
 
-local tileMap = TileMap(Vector(256, 256), Vector(16, 16))
 
 function love.load()
     characterController:addCharacter(testCharacter)
@@ -29,7 +38,7 @@ function love.update(dt)
 end
 
 function love.textinput(t)
-
+    -- TODO comprobar si hay algun input con el focus
 end
 
 function love.keypressed(key)
@@ -37,10 +46,15 @@ function love.keypressed(key)
     cameraController:onKeyPressed(key)
 end
 
+function love.mousepressed(x, y, button)
+    characterController:onMousePressed(button, Vector(cameraController.getCamera().x, cameraController.getCamera().y), 
+        Vector(cameraController.getCamera().scaleX, cameraController.getCamera().scaleY))
+end
+
 function love.draw()
     cameraController.setCamera()
-    -- testCharacter:draw()
     tileMap:draw()
+    testCharacter:draw()
     cameraController.unsetCamera()
 end
 

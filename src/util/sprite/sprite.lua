@@ -19,7 +19,9 @@ function Sprite.new(self, imagePath, posX, posY)
 end
 
 function Sprite.loadImage(self, imagePath, settings)
+	-- TODO: ver qué es settings
 	self.image = love.graphics.newImage(imagePath)
+    self.image:setFilter("nearest", "linear") -- no se ve bien
 end
 
 function Sprite.setCollisionBox()

@@ -61,7 +61,7 @@ end
 function TileMap.renderRegion(self, regionOrigin, regionSize)
     for x = regionOrigin.x, regionSize.x do
         for y = regionOrigin.y, regionSize.y do
-            self:setCell(x, y, self.tileset.atlas[3])     -- TODO: hay que pasar la cell que sea en función de la información del mundo
+            self:setCell(x, y, self.tileset.atlas[0])     -- TODO: hay que pasar la cell que sea en función de la información del mundo
         end
     end
 end
@@ -79,5 +79,5 @@ function TileMap.mapToWorldPosition(self, x, y)
 end
 
 function TileMap.worldToMapPosition(self, x, y)
-    -- tenemos que obtener la celda dentro del cual está (x, y) (división entera)
+    return Vector(math.floor(x / self.tileSize.x), math.floor(y / self.tileSize.y))
 end

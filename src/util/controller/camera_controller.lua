@@ -10,7 +10,7 @@ function CameraController.new(self)
 	self.posY = 0
 
 	self.zoomInc = 1.2
-	self.speed = 3
+	self.speed = worldCellSize.x
 	self.rotationSpeed = 3
 
 	self.setKeyRepeat = true
@@ -34,6 +34,13 @@ function CameraController.getCamera()
 	return camera
 end
 
+function CameraController.getCameraScale()
+	return Vector(camera.scaleX, camera.scaleY)
+end
+
+function CameraController.getCameraPosition(self)
+	return Vector(camera.x, camera.y)
+end
 
 function CameraController.onKeyPressed(self, key)
 	-- zoom
@@ -47,6 +54,7 @@ function CameraController.onKeyPressed(self, key)
 	if key == "a" then self:translate(-self.speed, 0) end
 	if key == "s" then self:translate(0, self.speed) end
 	if key == "d" then self:translate(self.speed, 0) end
+
 end
 
 
