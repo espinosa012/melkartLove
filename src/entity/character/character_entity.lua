@@ -9,6 +9,9 @@ function CharacterEntity.new(self, posX, posY)
     self.state_machine = nil
     self.sprite = nil
 
+    -- TODO: llevar a un componente de atributos de este tipo
+    self.movementSpeed = 2  -- px per frame
+
     self:loadSprite("resources/character.png")  -- TODO: test, quitar
     self:loadStateMachine()
 

@@ -19,7 +19,8 @@ function CharacterController.update(self, dt)
 	-- TODO: temporal
 	if not self:isCharacterSelected() then return end
 	if self.selectedCharacter:getStateMachine():getState() == "MOVING" then
-		self:translateCharacterAlongPath(self.selectedCharacter)
+		-- self:translateCharacterAlongPath(self.selectedCharacter, dt)
+		self:moveCharacterAlongPath(self.selectedCharacter, dt)
 	end
 end
 
@@ -28,10 +29,10 @@ function CharacterController.onKeyPressed(self, key)
 	if key == "escape" then self:clearSelection() end
 
 	if self.selectedCharacter ~= nil then
-		if key == "up" then self:manualCharacterMoving(Vector(0, -1)) end
-		if key == "down" then self:manualCharacterMoving(Vector(0, 1)) end
-		if key == "right" then self:manualCharacterMoving(Vector(1, 0)) end
-		if key == "left" then self:manualCharacterMoving(Vector(-1, 0)) end
+		if key == "up" then self:manualCharacterMoving(self.selectedCharacter, Vector(0, -1)) end
+		if key == "down" then self:manualCharacterMoving(self.selectedCharacter, Vector(0, 1)) end
+		if key == "right" then self:manualCharacterMoving(self.selectedCharacter, Vector(1, 0)) end
+		if key == "left" then self:manualCharacterMoving(self.selectedCharacter, Vector(-1, 0)) end
 	end
 end
 
@@ -63,21 +64,6 @@ function CharacterController.isCharacterSelected(self)
 	return  self.selectedCharacter ~= nil
 end
 
-function CharacterController.setCharacterPath(self, character, targetX, targetY)
-	-- TODO: comprobar que targetPos está dentro del mundo
-	if character == nil then return end
-
-	local characterMapPositionX, characterMapPositionY = _G.tileMap:worldToMapPosition(self.selectedCharacter:getPosition())
-	-- Asignamos el path del personaje
-	local worldPath = self:getWorldPath(_G.astar:getPath(characterMapPositionX, characterMapPositionY, targetX, targetY))
-
-	-- TODO: Definimos dos variables, dx, dy, dependientes de la velocidad, para crear un nuevo array path con valores del mundo intercalando entre
-	-- los de mapPath otros intermedios.
-
-	self.selectedCharacter.state_machine.path = worldPath
-	self.selectedCharacter.state_machine:setState("MOVING")	-- TODO: en función de la dirección en que nos movamos, el estado será uno u otro, para aniumación del sprite. en um de estados
-end
-
 function CharacterController.getWorldPath(self, mapPath)
 	local worldPath = {}
 	for _index, value in ipairs(mapPath) do
@@ -85,40 +71,52 @@ function CharacterController.getWorldPath(self, mapPath)
 		table.insert(worldPath, Vector(targetPositionX, targetPositionY))	-- TODO: se podría insertar directamente el Vector2
 	end
 	return worldPath
-end	-- TODO: habrá que pasarle algún argumento para indicar la velocidad
-
-function CharacterController.translateCharacterAlongPath(self, character)
-	-- vamos al índice siguiente al que nos encontremos.
-	if not self:isValidPath(self.selectedCharacter.state_machine.path) then return end
-
-	local characterPosX, characterPosY = character:getPosition()
-	local currentPathPosition = self:getCurrentPathPosition(characterPosX, characterPosY)
-
-	if #character.state_machine.path < currentPathPosition then
-		character.state_machine:setState("IDLE")
-	else
-		character:setPosition(character:getStateMachine():getPath()[currentPathPosition].x,
-			character:getStateMachine():getPath()[currentPathPosition].y)
-		-- love.timer.sleep(0.1)	
-	end
 end
 
-function CharacterController.getCurrentPathPosition(self, characterPosX, characterPosY)
-	for index, value in ipairs(self.selectedCharacter.state_machine.path) do
-		if value.x == characterPosX and value.y == characterPosY then
-			return index + 1
+function CharacterController.setCharacterPath(self, character, targetX, targetY)
+	-- TODO: comprobar que targetPos está dentro del mundo
+	if character == nil then return end
+
+	local characterMapPositionX, characterMapPositionY = _G.tileMap:worldToMapPosition(self.selectedCharacter:getPosition())
+	local worldPath = self:getWorldPath(_G.astar:getPath(characterMapPositionX, characterMapPositionY, targetX, targetY))
+
+	self.selectedCharacter.state_machine.path = worldPath
+	self.selectedCharacter.state_machine.currentPathPosition = 1
+	self.selectedCharacter.state_machine:setState("MOVING")	-- TODO: en función de la dirección en que nos movamos, el estado será uno u otro, para aniumación del sprite. en um de estados
+end
+
+function CharacterController.moveCharacterAlongPath(self, character)
+	-- nos movemos hacia character.state_machine.path[character.state_machine.currentPathPosition]. 
+	-- Cuando lo alcancemos, incrementamos el índice
+	-- comprobamos si estamos lo suficientemente cerca de targetPosition como para asumir que ya hemos llegado. 
+	-- En caso contrario, seguimos deslizando
+	local targetPosition = character:getStateMachine().path[character:getStateMachine().currentPathPosition]
+	local characterCurrentPosX, characterCurrentPosY = character:getPosition()
+	local dx = targetPosition.x - characterCurrentPosX
+	local dy = targetPosition.y - characterCurrentPosY
+	local distance = math.sqrt(dx * dx + dy * dy)
+	-- local stepSpeed = character.movementSpeed * dt
+	local stepSpeed = character.movementSpeed
+
+	if distance < stepSpeed then
+		character:setPosition(targetPosition.x, targetPosition.y)
+		-- actualizamos el índice actual. si hemmos llegado al final del path, nos ponemos en IDLE
+		if self:isCharacterPathCompleted(character) then
+			character.state_machine:setState("IDLE")
+		else
+			character:getStateMachine():incCurrentPathPosition()
 		end
+	else
+		character:setPosition(characterCurrentPosX + dx / distance * stepSpeed, characterCurrentPosY + dy / distance * stepSpeed)
 	end
-	return nil
 end
 
-function CharacterController.isValidPath(self, path)
-	return self.selectedCharacter.state_machine.path ~= nil and #path > 0 and path[1] ~= nil
+function CharacterController.isCharacterPathCompleted(self, character)
+	return character:getStateMachine().currentPathPosition == #character:getStateMachine().path
 end
 
-function CharacterController.manualCharacterMoving(self, movementDirection)	
-	local speed = worldCellSize.x
+function CharacterController.manualCharacterMoving(self, character, movementDirection)
 	local currentCharacterPosition = self.selectedCharacter:getPositionV()
-	self.selectedCharacter:setPosition(currentCharacterPosition.x + movementDirection.x * speed,
-		currentCharacterPosition.y + movementDirection.y * speed)
+	character:setPosition(currentCharacterPosition.x + movementDirection.x * character.movementSpeed,
+		currentCharacterPosition.y + movementDirection.y * character.movementSpeed)
 end

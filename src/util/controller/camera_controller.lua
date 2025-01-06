@@ -10,7 +10,7 @@ function CameraController.new(self)
 	self.posY = 0
 
 	self.zoomInc = 1.2
-	self.speed = worldCellSize.x
+	self.speed = worldCellSize
 	self.rotationSpeed = 3
 
 	self.setKeyRepeat = true
