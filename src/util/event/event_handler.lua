@@ -1,6 +1,5 @@
 EventHandler = Object.extend(Object)
 
-
 function EventHandler.new(self)
     self.handlers = {}
 end
@@ -45,7 +44,7 @@ function EventHandler.unhook(self, eventType, callback)
 end
 
 function EventHandler.invoke(self, eventType, ...)
-    -- assert(self.handlers[eventType] == nil, "Could no invoke event of type "..eventType.." because is not defined")
+    assert(self.handlers[eventType] ~= nil, "Could no invoke event of type "..eventType.." because is not defined")
     local tbl = self.handlers[eventType]
     for i = 1, #tbl do
         tbl[i](...)

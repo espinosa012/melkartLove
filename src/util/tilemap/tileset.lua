@@ -6,12 +6,11 @@ function Tileset.new(self, tileSize)
     self.spriteBatch = nil
     self.atlas = nil  -- son los distintos quads
     self.tileSize = tileSize
-
 end
 
 function  Tileset.load(self, sourceFilename)
     self:setSource(sourceFilename)
-    self.atlas = {}
+    self.atlas = List()
 end
 
 function Tileset.setSource(self, sourceFilename)

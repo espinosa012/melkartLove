@@ -1,14 +1,18 @@
 --! file: main.lua
 _G.love = require "love"
-_G.Object = require("src/lbr/classic")
-require("src/debug")
-require("src/entity/character/character_entity")
-require("src/util/controller/character_controller")
-require("src/util/controller/camera_controller")
-require("src/util/pathfinding/astar")
-require("src/util/pathfinding/jumper")
-require("src/util/tilemap/tilemap")
-require("src.util.event.event_handler")
+_G.Object = require("src.lbr.classic")
+
+require "src.debug"
+require "src.entity.character.character_entity"
+require "src.util.controller.character_controller"
+require "src.util.controller.camera_controller"
+require "src.util.pathfinding.pathfinder"
+require "src.util.tilemap.tilemap"
+require "src.util.event.event_handler"
+require "src.util.data.vector"
+require "src.util.data.list"
+require "src.util.statemachine.state"
+require "src.util.event.key"
 
 _G.worldSize = Vector(512, 512)
 _G.worldCellSize = 16    -- para casillas del tilemap, movimiento, etc.
@@ -17,26 +21,17 @@ local sceneObjects = {} -- almacenamos los distintos objetos de la escena (perso
 local characterController = CharacterController()
 local cameraController = CameraController()
 
-
--- TODO igual podriamos hacer globales todas estas 
-_G.tileMap = TileMap(worldSize, Vector(worldCellSize, worldCellSize))
-_G.astar = Jumper(worldSize.x, worldSize.y) -- tODO: debería revargarse con cada chunk Wo algo así
-
+_G.tileMap = TileMap(worldSize, Vector(worldCellSize, worldCellSize), "resources/terrainAtlas.png")
+_G.astar = PathFinder(worldSize.x, worldSize.y, 'ASTAR') -- tODO: debería recargarse con cada chunk o algo así
 _G.eventHandler = EventHandler()
-local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0)) 
 
--- pruebas 
-local function onSpacePressed()
-    print("Space inbvoek")
-end
+local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0))
+local testCharacter2 = CharacterEntity(_G.tileMap:mapToWorldPosition(4, 4))
 
 function love.load()
     characterController:addCharacter(testCharacter)
+    characterController:addCharacter(testCharacter2)
     tileMap:load()
-
-    -- probamos el módulo de Eventos
-    eventHandler:addEvent("on_space_pressed")
-    eventHandler:hook("on_space_pressed", onSpacePressed)
 end
 
 function love.update(dt)
@@ -70,23 +65,22 @@ end
 function love.directorydropped(x, y)
 end
 
-
 function love.filedropped(x, y)
 end
 
 function love.draw()
     cameraController.setCamera()
     tileMap:draw()
+    
+    -- TODO necesitamos la manera de dibujar automáticamente todos los personajes que tengamos
     testCharacter:draw()
+    testCharacter2:draw()
     cameraController.unsetCamera()
 end
 
 function love.quit()
-
 end
 
--- function love.errorhandler(msg)
--- end
 local function addGameObject(name, obj)
     table.insert(sceneObjects, {name=obj})
 end

@@ -18,17 +18,16 @@ function Sprite.new(self, imagePath, posX, posY)
 	self:loadImage(imagePath, nil)
 end
 
-function Sprite.loadImage(self, imagePath, settings)
-	-- TODO: ver qué es settings
+function Sprite.loadImage(self, imagePath, settings) -- TODO: ver qué es settings
 	self.image = love.graphics.newImage(imagePath)
     self.image:setFilter("nearest", "linear") -- no se ve bien
 end
 
-function Sprite.setCollisionBox()
-	
+function Sprite.setCollisionBox(self, collBox)
+	self.collisionBox = collBox
 end
 
-function Sprite.rotate(r)
+function Sprite.rotate(self, r)
 	self.rotation = r
 end
 
@@ -41,13 +40,10 @@ function Sprite.mirrorImageY()
 end
 
 function Sprite.setColor(self, r, g, b)
-	self.color = Color(r, g, b) 
+	self.color = Color(r, g, b)
 end
 
 function Sprite.draw(self)
-	-- love.graphics.setColor(love.math.colorFromBytes(self.color.R, self.color.G, self.color.B))
-    -- love.graphics.circle(self.drawMode, self.posX, self.posY, self.sizeX/2)
 	love.graphics.draw(self.image, self.posX, self.posY, self.rotation, self.scaleX, self.scaleY, self.originOffsetX, self.originOffsetY, 
 		self.shearingX, self.shearingY)
-
 end
