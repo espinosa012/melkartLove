@@ -1,6 +1,7 @@
 --! file: list.lua
 List = Object.extend(Object)
 
+-- TODO: necesitaríamos una manera de iterar sobre la lista sin necesidad de acceder a su 'items'. igual para acceder por índice
 
 function List.new(self)
 	self.items = nil
@@ -16,9 +17,8 @@ function List.clear(self)
 end
 
 function List.add(self, obj)
-	local size = self.size + 1
 	table.insert(self.items, obj)
-	self.size = size
+	self.size = #self.items
 end
 
 function List.insertAtPosition(self, obj, position)
@@ -34,6 +34,16 @@ function List.find(self, obj)
 	return nil
 end
 
-function List.has(obj)
+function List.has(self, obj)
    return self.pointers[obj]
+end
+
+-- untested
+function List.remove(self, obj)
+	table.remove(self.items, self:find(obj))
+end
+
+-- untested
+function List.removeAtPosition(self, pos)
+	table.remove(self.items, pos)
 end

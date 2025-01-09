@@ -3,24 +3,24 @@ require "src.util.data.list"
 CharacterController = Object.extend(Object)
 
 --	TODO: hay que hacer la clase madre de los controladores, para los métodos de teclas, ratón, eventos, etc
---	TODO: igual este módulo no tend'ria que estar en util, sino en una carpeta controller fuera, y dejar en util la clase madre
+--	TODO: igual este módulo no tendría que estar en util, sino en una carpeta controller fuera, y dejar en util la clase madre
 -- 	TODO: usar cámara de hump
 
 function CharacterController.new(self)
-	self.availableCharacters = {}
+	self.availableCharacters = List()
 	self.selectedCharacter = nil
 end
 
 function CharacterController.addCharacter(self, characterEntity)
-	table.insert(self.availableCharacters, characterEntity)
+	self.availableCharacters:add(characterEntity)
 end
 
 function CharacterController.update(self, dt)
-	-- TODO: temporal
-	if not self:isCharacterSelected() then return end
+	self:moveCharacters()
+end
 
-	-- TODO: aquí hay que comprobar si tenemos algún personaje moviéndose, no sólo el seleccionado
-	for _, character in ipairs(self.availableCharacters) do
+function CharacterController.moveCharacters(self)
+	for _, character in ipairs(self.availableCharacters.items) do
 		if character:getStateMachine():getState() == "MOVING" then
 			self:moveCharacterAlongPath(character)
 		end
@@ -56,15 +56,12 @@ function CharacterController.onMouseLeftClick(self, cameraPosition, cameraScale)
 end
 
 function CharacterController.selectCharacter(self, characterIndex)
-	self.selectedCharacter = self.availableCharacters[characterIndex]
+	self.selectedCharacter = self.availableCharacters.items[characterIndex]
 end
 
 function CharacterController.clearSelection(self)
 	self.selectedCharacter = nil
 	print("Selection cleared")
-end
-
-function CharacterController.getSelectedCharacter(self)
 end
 
 function CharacterController.isCharacterSelected(self)
@@ -125,4 +122,4 @@ function CharacterController.manualCharacterMoving(self, character, movementDire
 	local currentCharacterPosition = self.selectedCharacter:getPositionV()
 	character:setPosition(currentCharacterPosition.x + movementDirection.x * character.movementSpeed,
 		currentCharacterPosition.y + movementDirection.y * character.movementSpeed)
-end	-- TODO: no funciona el movimiento manual en diagonal
+end	-- TODO: no funciona el movimiento manual en diagonal (dos teclas a la vez)
