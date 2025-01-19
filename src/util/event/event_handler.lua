@@ -1,5 +1,12 @@
 EventHandler = Object.extend(Object)
 
+-- Para la gestión de eventos
+-- Ejemplo
+--  eventHandler:addEvent("on_space_pressed")           -> registramos el evento en este handler añadimos el evento 
+--  eventHandler:hook("on_space_pressed", spaceEvent)   -> asociamos dicho evento con una función (puede recibir los argumentos que quiera)
+--  eventHandler:invoke("on_space_pressed", ...)        -> llamamos a invoke, pasándole el evento, que debe estar registrado, 
+                                                        -- y todos los argumentos que reciba la funicón con que lo hemos asociado
+
 function EventHandler.new(self)
     self.handlers = {}
 end

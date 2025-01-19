@@ -14,6 +14,8 @@ require "src.util.data.list"
 require "src.util.statemachine.state"
 require "src.util.event.key"
 
+local bump = require "src.lbr.bump"
+
 _G.worldSize = Vector(512, 512)
 _G.worldCellSize = 16    -- para casillas del tilemap, movimiento, etc.
 
@@ -26,7 +28,12 @@ _G.astar = PathFinder(worldSize.x, worldSize.y, 'ASTAR') -- tODO: debería recar
 _G.eventHandler = EventHandler()
 
 local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0))
+testCharacter.collider = {}
+
 local testCharacter2 = CharacterEntity(_G.tileMap:mapToWorldPosition(4, 4))
+testCharacter2.collider = {}
+
+
 
 function love.load()
     characterController:addCharacter(testCharacter)
@@ -44,9 +51,7 @@ function love.textinput(t)
 end
 
 function love.keypressed(key)
-    if key == "space" then
-        eventHandler:invoke("on_space_pressed")
-    end
+    -- ejemplo de uso del event handler
     characterController:onKeyPressed(key)
     cameraController:onKeyPressed(key)
 end
@@ -71,7 +76,6 @@ end
 function love.draw()
     cameraController.setCamera()
     tileMap:draw()
-    
     -- TODO necesitamos la manera de dibujar automáticamente todos los personajes que tengamos
     testCharacter:draw()
     testCharacter2:draw()
@@ -82,5 +86,6 @@ function love.quit()
 end
 
 local function addGameObject(name, obj)
-    table.insert(sceneObjects, {name=obj})
+    table.insert(sceneObjects, {name=obj})  -- TODO: añadir elementos como un diccionario donde la key es la posición en el mundo 
+                                            -- para mayor eficiencia. Cuando se actualice la posición se debe cambiar también la key
 end

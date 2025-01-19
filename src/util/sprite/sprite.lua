@@ -23,8 +23,16 @@ function Sprite.loadImage(self, imagePath, settings) -- TODO: ver qué es settin
     self.image:setFilter("nearest", "linear") -- no se ve bien
 end
 
-function Sprite.setCollisionBox(self, collBox)
-	self.collisionBox = collBox
+function Sprite.loadCollisionBox(self)
+	self.collisionBox = CollisionBox(self)
+end
+
+function Sprite.getWidth(self)
+	return self.image:getWidth()
+end
+
+function Sprite.getHeight(self)
+	return self.image:getHeight()
 end
 
 function Sprite.rotate(self, r)

@@ -1,5 +1,8 @@
 --! file: camera.lua
-camera = {}
+
+-- TODO investigar cámara HUMP
+
+_G.camera = {}
 camera.x = 0
 camera.y = 0
 camera.scaleX = 1
