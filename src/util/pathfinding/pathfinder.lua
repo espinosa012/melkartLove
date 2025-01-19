@@ -1,8 +1,8 @@
 --! file: pathfinder.lua
-local Pathfinder = require ("src.util.pathfinding.jumper.pathfinder")
-local Grid = require ("src.util.pathfinding.jumper.grid")
+local Pathfinder = require ("src.lbr.jumper.pathfinder")
+local Grid = require ("src.lbr.jumper.grid")
 
-PathFinder = Object.extend(Object)
+_G.PathFinder = _G.Object.extend(_G.Object)
 
 function PathFinder.new(self, sizeX, sizeY, finderType)
     self.map = {}

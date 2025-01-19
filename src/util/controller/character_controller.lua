@@ -1,6 +1,6 @@
 --! file: character_controller.lua
 require "src.util.data.list"
-CharacterController = Object.extend(Object)
+CharacterController = _G.Object.extend(Object)
 
 --	TODO: hay que hacer la clase madre de los controladores, para los métodos de teclas, ratón, eventos, etc
 --	TODO: igual este módulo no tendría que estar en util, sino en una carpeta controller fuera, y dejar en util la clase madre
@@ -16,10 +16,13 @@ function CharacterController.addCharacter(self, characterEntity)
 end
 
 function CharacterController.update(self, dt)
+	for index, character in ipairs(self.availableCharacters.items) do
+		character:update(dt)
+	end	-- TODO: mejorar
 	self:moveCharacters()
 end
 
-function CharacterController.moveCharacters(self)
+function CharacterController.moveCharacters(self)	-- TODO: unificar con el update (llevar dentro?? estaríamos llevando cosas del controller),
 	for _, character in ipairs(self.availableCharacters.items) do
 		if character.state_machine:getState() == "MOVING" then
 			self:moveCharacterAlongPath(character)
@@ -28,11 +31,12 @@ function CharacterController.moveCharacters(self)
 end
 
 function CharacterController.onKeyPressed(self, key)
-	if key == Key.SELECT_CHARACTER_1 then self:selectCharacter(1) end
-	if key == Key.SELECT_CHARACTER_2 then self:selectCharacter(2) end
+	if key == _G.InputMap.SELECT_CHARACTER_1 then self:selectCharacter(1) end
+	if key == _G.InputMap.SELECT_CHARACTER_2 then self:selectCharacter(2) end
+	if key == _G.InputMap.SELECT_CHARACTER_3 then self:selectCharacter(3) end
 	-- TODO: hacer escalable, de modo que cada tecla de número se asocia a su personaje correspondiente
 
-	if key == Key.CLEAR_CHARACTER_SELECTION then self:clearSelection() end
+	if key == _G.InputMap.CLEAR_CHARACTER_SELECTION then self:clearSelection() end
 	if self.selectedCharacter ~= nil then self:manuallyMovedCharacter(self.selectedCharacter, key) end
 end
 
@@ -68,7 +72,7 @@ function CharacterController.getWorldPath(self, mapPath)
 	local worldPath = {}
 	for _, value in ipairs(mapPath) do
 		local targetPositionX, targetPositionY = _G.tileMap:mapToWorldPosition(value.x, value.y)	-- TODO: quitar y recibir directamente las posiciones del mundo
-		table.insert(worldPath, Vector(targetPositionX, targetPositionY))
+		table.insert(worldPath, Vector2(targetPositionX, targetPositionY))
 	end
 	return worldPath
 end
@@ -114,16 +118,18 @@ function CharacterController.isCharacterPathCompleted(self, character)
 	return character.state_machine.currentPathPosition == #character.state_machine.path
 end
 
+
+
+-- TODO: igual no lo usamos esto...
 function CharacterController.manualCharacterMoving(self, character, movementDirection)
 	local currentCharacterPosition = self.selectedCharacter:getPositionV()
 	character:setPosition(currentCharacterPosition.x + movementDirection.x * character.movementSpeed,
 		currentCharacterPosition.y + movementDirection.y * character.movementSpeed)
 end	-- TODO: no funciona el movimiento manual en diagonal (dos teclas a la vez)
 
--- TODO: igual no lo usamos esto...
 function CharacterController.manuallyMovedCharacter(self, character, key)
-	if key == Key.UP then self:manualCharacterMoving(character, Vector(0, -1)) end
-	if key == Key.DOWN then self:manualCharacterMoving(character, Vector(0, 1)) end
-	if key == Key.RIGHT then self:manualCharacterMoving(character, Vector(1, 0)) end
-	if key == Key.LEFT then self:manualCharacterMoving(character, Vector(-1, 0)) end
+	if key == _G.InputMap.UP then self:manualCharacterMoving(character, Vector2(0, -1)) end
+	if key == _G.InputMap.DOWN then self:manualCharacterMoving(character, Vector2(0, 1)) end
+	if key == _G.InputMap.RIGHT then self:manualCharacterMoving(character, Vector2(1, 0)) end
+	if key == _G.InputMap.LEFT then self:manualCharacterMoving(character, Vector2(-1, 0)) end
 end

@@ -1,2 +1,5 @@
 --! file: state.lua
-_G.State = {IDLE = "IDLE", MOVING = "MOVING"}
+_G.State = {
+    IDLE = "IDLE", 
+    MOVING = "MOVING"
+}

@@ -1,10 +1,10 @@
 --! file: sprite.lua
 require "src/util/data/color" 
-Sprite = Object.extend(Object)	-- TODO no se si debe heredar de aqui...
+
+_G.Sprite = _G.Object.extend(_G.Object)
 
 function Sprite.new(self, imagePath, posX, posY)
 	self.image = nil
-	self.collisionBox = nil
 	self.posX = posX
 	self.posY = posY
 	self.scaleX = 1
@@ -21,10 +21,6 @@ end
 function Sprite.loadImage(self, imagePath, settings) -- TODO: ver qué es settings
 	self.image = love.graphics.newImage(imagePath)
     self.image:setFilter("nearest", "linear") -- no se ve bien
-end
-
-function Sprite.loadCollisionBox(self)
-	self.collisionBox = CollisionBox(self)
 end
 
 function Sprite.getWidth(self)

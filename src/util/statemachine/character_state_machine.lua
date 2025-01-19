@@ -1,7 +1,7 @@
 --! file: character_state_machine.lua
 require "src.util.statemachine.base_state_machine"
 
-CharacterStateMachine = Object.extend(BaseStateMachine)
+_G.CharacterStateMachine = _G.Object.extend(BaseStateMachine)
 
 
 function CharacterStateMachine.new(self)

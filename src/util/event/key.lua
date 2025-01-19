@@ -1,5 +1,7 @@
 --! file: key.lua
-_G.Key = {
+
+-- llevar a otro sitio
+_G.InputMap = {
     UP = "up",
     DOWN = "down",
     LEFT = "left",
@@ -16,5 +18,6 @@ _G.Key = {
     -- TODO: cambiar esto para mayor escalabilidad
     SELECT_CHARACTER_1 = "1",
     SELECT_CHARACTER_2 = "2",
+    SELECT_CHARACTER_3 = "3",
     CLEAR_CHARACTER_SELECTION = "escape"
 }

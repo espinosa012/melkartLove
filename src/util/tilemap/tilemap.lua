@@ -6,10 +6,10 @@ TileMap = Object.extend(Object)
 
 function TileMap.new(self, mapSize, tileSize, tileSetPath)
     self.world = nil    -- TODO: el tilemap debe conocer el mundo que está renderizando (o al menos cierta información)
-    self.position = Vector(0, 0)
+    self.position = Vector2(0, 0)
     self.mapSize = mapSize
     self.tileSize = tileSize
-    self.zoom = Vector(1, 1)
+    self.zoom = Vector2(1, 1)
     self.tileset = nil
     self.cells = {}
     self.tileSetPath = tileSetPath  -- podríamos tener más de un tileset...
@@ -32,7 +32,7 @@ function TileMap.load(self)
     self.tileset.atlas:insertAtPosition(love.graphics.newQuad(0 * self.tileSize.x, 0, self.tileSize.x, self.tileSize.y, quadWidth, quadHeight), 5)
 
     self.mapSpriteBatch = love.graphics.newSpriteBatch(self.tileset.sourceImage, self.mapSize.x * self.mapSize.x)
-    self:renderRegion(Vector(0, 0), Vector(5, 5))
+    self:renderRegion(Vector2(0, 0), Vector2(5, 5))
 end
 
 function TileMap.update(self, dt)

@@ -1,12 +1,12 @@
 --! file: vector2.lua
-local Vector2 = {}
-Vector2.__index = Vector2
+_G.Vector2 = {}
+_G.Vector2.__index = Vector2
 
 local function new( x, y )
     return setmetatable( { x = x or 0, y = y or 0 }, Vector2 )
 end
 
-function _G.isVector( vTbl )
+function _G.isVector2( vTbl )
     return getmetatable( vTbl ) == Vector2
 end
 

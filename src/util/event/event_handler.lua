@@ -1,4 +1,4 @@
-EventHandler = Object.extend(Object)
+EventHandler = _G.Object.extend(_G.Object)
 
 -- Para la gestión de eventos
 -- Ejemplo

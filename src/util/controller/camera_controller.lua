@@ -1,23 +1,17 @@
 --! file: camera_controller.lua
-require("src.util.camera.camera")
-CameraController = Object.extend(Object)
+require "src.util.camera.camera"
+
+CameraController = _G.Object.extend(Object)
 
 function CameraController.new(self)
 	self.followingObject = nil
 
-	self.posX = 0
-	self.posY = 0
-
+	-- TODO: llevar estos valores a configuracion o similar
 	self.zoomInc = 1.2
-	self.speed = worldCellSize
+	self.speed = _G.worldCellSize
 	self.rotationSpeed = 3
 
-	self:initialize()
-end
-
-function CameraController.initialize(self)
-	self:moveTo(self.posX, self.posY)
-    love.keyboard.setKeyRepeat(true) -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
+	love.keyboard.setKeyRepeat(true) -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
 end
 
 function CameraController.setCamera()
@@ -33,23 +27,23 @@ function CameraController.getCamera()
 end
 
 function CameraController.getCameraScale()
-	return Vector(camera.scaleX, camera.scaleY)
+	return Vector2(camera.scaleX, camera.scaleY)
 end
 
 function CameraController.getCameraPosition(self)
-	return Vector(camera.x, camera.y)
+	return Vector2(camera.x, camera.y)
 end
 
 function CameraController.onKeyPressed(self, key)
 	-- zoom
-	if key == Key.CAMERA_ZOOM_IN then self:zoom(1/self.zoomInc) end
-	if key == Key.CAMERA_ZOOM_OUT then self:zoom(self.zoomInc) end
+	if key == _G.InputMap.CAMERA_ZOOM_IN then self:zoom(1/self.zoomInc) end
+	if key == _G.InputMap.CAMERA_ZOOM_OUT then self:zoom(self.zoomInc) end
 
 	-- position TODO: si estamos siguiendo a un objeto, no afecta
-	if key == Key.CAMERA_MOVE_UP then self:translate(0, -self.speed) end
-	if key == Key.CAMERA_MOVE_LEFT then self:translate(-self.speed, 0) end
-	if key == Key.CAMERA_MOVE_DOWN then self:translate(0, self.speed) end
-	if key == Key.CAMERA_MOVE_RIGHT then self:translate(self.speed, 0) end
+	if key == _G.InputMap.CAMERA_MOVE_UP then self:translate(0, -self.speed) end
+	if key == _G.InputMap.CAMERA_MOVE_LEFT then self:translate(-self.speed, 0) end
+	if key == _G.InputMap.CAMERA_MOVE_DOWN then self:translate(0, self.speed) end
+	if key == _G.InputMap.CAMERA_MOVE_RIGHT then self:translate(self.speed, 0) end
 
 	-- rotation
 

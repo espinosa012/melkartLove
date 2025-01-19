@@ -1,5 +1,5 @@
 --! file: base_state_machine.lua
-BaseStateMachine = Object.extend(Object)
+_G.BaseStateMachine = _G.Object.extend(_G.Object)
 
 function BaseStateMachine.new(self)
     self.currentState = nil

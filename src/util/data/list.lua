@@ -1,5 +1,5 @@
 --! file: list.lua
-List = Object.extend(Object)
+List = _G.Object.extend(_G.Object)
 
 -- TODO: necesitaríamos una manera de iterar sobre la lista sin necesidad de acceder a su 'items'. igual para acceder por índice
 

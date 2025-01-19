@@ -1,5 +1,5 @@
 --! file: base_entity.lua
-BaseEntity = Object.extend(Object)
+BaseEntity = _G.Object.extend(Object)
 
 function BaseEntity.new(self)
 	self.state_machine = nil
@@ -28,7 +28,7 @@ end
 
 -- Entity position
 function BaseEntity.getPositionV(self)
-    return Vector(self.sprite.posX, self.sprite.posY)
+    return Vector2(self.sprite.posX, self.sprite.posY)
 end
 
 function BaseEntity.getPosition(self)
@@ -40,12 +40,19 @@ function BaseEntity.setPositionV(self, pos)
 end
 
 function BaseEntity.setPosition(self, x, y)
+    -- udpating sprite position
+    self:setSpritePosition(x, y)
+    -- udpating collider position
+    self:setColliderPosition(x+8, y+8)  -- TODO: el 8 a pelo son pruebas por el tamaño del sprite, guardar en variable en función de características del character
+end
+
+function BaseEntity.setColliderPosition(self, x, y)
+    self.collider.body:setPosition(x, y)    -- TODO: igual esto debería ir en nuestro CollisionHandler
+end
+
+function BaseEntity.setSpritePosition(self, x, y)
     self.sprite.posX = x
     self.sprite.posY = y
 end
 
--- Entity collisions
-function BaseEntity.checkCollision(self, dt)
 
-    
-end
