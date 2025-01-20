@@ -6,7 +6,7 @@ collisionHandler:addCollisionClass("CharacterCollision")
 
 
 
-CollisionHandler = Object.extend(BaseEntity) -- TODO: igual no debe ser una clase, no sé...
+CollisionHandler = Object.extend(Object) -- TODO: igual no debe ser una clase, no sé...
 
 
 

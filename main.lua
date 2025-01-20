@@ -14,6 +14,7 @@ require "src.util.data.list"
 require "src.util.statemachine.state"
 require "src.util.event.key"
 require "src.util.collision.collision_handler"
+require "src.util.timemanager.timemanager"
 
 _G.worldSize = Vector2(512, 512)
 _G.worldCellSize = 16    -- para casillas del tilemap, movimiento, etc.
@@ -25,10 +26,10 @@ local characterController = CharacterController()
 local cameraController = CameraController()
 
 -- COLLISIONS (Se podría meter en nuestro collisionHandler)
-
--- podemos tener distintas clases de colliders para comprobar colisiones más eficientemente
 -- añadir otro collider al character para interacciones (CharacterInteractionCollider)
 
+-- TIME MANAGER 
+_G.timeManager = TimeManager()
 
 -- GLOBAL
 _G.tileMap = TileMap(worldSize, Vector2(worldCellSize, worldCellSize), "resources/terrainAtlas.png")
@@ -37,9 +38,7 @@ _G.eventHandler = EventHandler()
 
 -- TESTING
 local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0))
-
 local testCharacter2 = CharacterEntity(_G.tileMap:mapToWorldPosition(4, 4))
-
 local testCharacter3 = CharacterEntity(_G.tileMap:mapToWorldPosition(9, 12))
 
 
@@ -48,12 +47,17 @@ function love.load()
     characterController:addCharacter(testCharacter2)
     characterController:addCharacter(testCharacter3)
     tileMap:load()
+    timeManager:start()
 end
 
 function love.update(dt)
     characterController:update(dt)    -- TODO: no hay que actualizar los personajes individualmente, sino el manager, controller o como lo hagamos
+    for index, character in ipairs(characterController.availableCharacters.items) do
+		character:update(dt)
+	end	-- TODO: mejora, quitar de aquí
     collisionHandler:update(dt)
     tileMap:update(dt)
+    timeManager:update(dt)
 end
 
 function love.textinput(t)

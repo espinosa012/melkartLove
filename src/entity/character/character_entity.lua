@@ -3,7 +3,7 @@ require "src.entity.base_entity"
 require "src.util.sprite.sprite"
 require "src.util.statemachine.character_state_machine"
 
-CharacterEntity = Object.extend(BaseEntity)
+_G.CharacterEntity = Object.extend(GameEntity)
 
 function CharacterEntity.new(self, posX, posY)
     -- TODO: llevar a un componente de atributos de este tipo
@@ -18,12 +18,13 @@ end
 
 -- love2D 
 function CharacterEntity.update(self, dt)
-    BaseEntity.update(self, dt)
+    GameEntity.update(self, dt)
 
     -- Algunas colisiones (en función de la clase) podemos coprobarlas en el update del personaje
     self:updateCollisions()
 
     -- TODO: quizás al seleccionar el personaje, deberíamos desactivar su collider, para que no lo encuentre
+    -- otra opción es cambiarle la clase al collider del personaje al seleccionar, para que no lo devuelva la query
 end
 
 function CharacterEntity.updateCollisions(self)
@@ -38,11 +39,12 @@ end
 
 -- Sprite
 function CharacterEntity.loadSprite(self, imagePath)
-    BaseEntity.loadSprite(self, imagePath)
+    GameEntity.loadSprite(self, imagePath)
 end
 
 -- Collider
 function CharacterEntity.loadCollider(self)
+    -- TODO usar aquí nuestra clase CollisionBox
     local x,  y = self:getPosition()
     self.collider = collisionHandler:newRectangleCollider(x+8, y+8, 16, 16) -- TODO: pruebas, configurar en función del character
     self.collider:setType("static")

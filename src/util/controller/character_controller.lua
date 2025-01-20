@@ -16,9 +16,6 @@ function CharacterController.addCharacter(self, characterEntity)
 end
 
 function CharacterController.update(self, dt)
-	for index, character in ipairs(self.availableCharacters.items) do
-		character:update(dt)
-	end	-- TODO: mejorar
 	self:moveCharacters()
 end
 
