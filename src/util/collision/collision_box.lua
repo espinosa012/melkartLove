@@ -1,12 +1,12 @@
 --! file: collision_box.lua 
 _G.CollisionBox = Object.extend(Object)
 
+
 -- Simplemente define un rectángulo cuyo vértice superior izquierdo está en la posición (x, y) y con unas dimensiones de width x height
 
 
--- TODO: habría que pasarle el sprite al que le vamos a asociar
--- TODO: podríamos pasarle la función que ueremos que se ejecute al deteectar coliksión...
-function CollisionBox.new(self, x, y, width, height, collisionClass, type)
+-- TODO: podríamos pasarle la función que ueremos que se ejecute al deteectar colisión...
+function CollisionBox.new(self, shape, x, y, width, height, collisionClass, type)  -- TODO pasar de alguna manera el tipo de collider (rectangular, circular, etc). esto viene en windfield
     self.collider = nil
     self.x = x
     self.y = y
@@ -14,11 +14,14 @@ function CollisionBox.new(self, x, y, width, height, collisionClass, type)
     self.height = height
     if collisionClass then self.collisionClass = collisionClass else self.collisionClass = nil end
     if type then self.colliderType = type else self.colliderType = "static" end
-    self:setCollider(x, y)
+    if shape then self.shape = shape else self.shape = "rectangular" end
+
+    -- TODO: sacar de aquí los tipos y llevar a una tabla externa
+    if self.shape == "rectangular" then self:setRectangularCollider(x, y) end
     -- TODO: es mejorable...
 end
 
-function CollisionBox.setCollider(self, x, y)
+function CollisionBox.setRectangularCollider(self, x, y)
     self.collider = collisionHandler:newRectangleCollider(self.x, self.y, self.width, self.height)
     self.collider:setType(self.colliderType)
     self:setPosition(x, y)
@@ -36,13 +39,27 @@ function CollisionBox.getPosition(self)
 end
 
 function CollisionBox.update(self, dt)  -- debe recibir dt??
-    -- TODO: para comprobar las colisiones con otros colliders y realizar alguna acción cuando se detecte alguna
-    local collisions = collisionHandler:queryRectangleArea(self.x, self.y, worldCellSize/2, worldCellSize/2, {"CharacterCollision"})   -- TODO: las detecta siempre, quizás detecte la propia
-    -- eliminar de la lista devuelta por la query el propio collider (o hacer que tenga otra clase)
-    if #collisions > 1 then -- TODO: así si... ,mayor que 1 pq el del character siempre está
-    -- TODO: gestionar colisiones
-        print(collisions[1])
+    -- para comprobar las colisiones con otros colliders y realizar alguna acción cuando se detecte alguna
+    local collisions = self:getCollisions()
+    if not collisions then return end
+
+    -- TODO: gestionar las colisiones en función  del tipo, etc
+    for i=1, #collisions do
+        print(collisions[i])
     end
-end -- TODO: desde el update del personaje (no sé...) se llama al update del collision box
+end 
+
+
+--- devuelve una lista con todas las colisiones actuales
+function CollisionBox.getCollisions(self)
+    local x, y = self:getPosition()
+    local collisions = collisionHandler:queryRectangleArea(x, y, worldCellSize/2, worldCellSize/2, {"CharacterCollision"})   -- TODO: las detecta siempre, quizás detecte la propia
+    if #collisions <= 1 then return nil end
+
+    local detectedColls = List()
+    for i=2, #collisions do detectedColls:add(collisions[i]) end
+    return detectedColls.items
+end
+
 
 -- TODO: usar el módulo de eventos, pasando funciones y argumentos, para gestionar las colisiones

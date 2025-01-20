@@ -22,21 +22,11 @@ function CharacterEntity.update(self, dt)
     GameEntity.update(self, dt)
 
     -- Algunas colisiones (en función de la clase) podemos coprobarlas en el update del personaje
-    self:updateCollisions()
+    self.collider:update(dt)
 
     -- TODO: quizás al seleccionar el personaje, deberíamos desactivar su collider, para que no lo encuentre
     -- otra opción es cambiarle la clase al collider del personaje al seleccionar, para que no lo devuelva la query
 end
-
-function CharacterEntity.updateCollisions(self)
-    local x, y = self:getPosition()
-    local collisions = collisionHandler:queryRectangleArea(x, y, worldCellSize/2, worldCellSize/2, {"CharacterCollision"})   -- TODO: las detecta siempre, quizás detecte la propia
-    if #collisions > 1 then -- TODO: así si... ,mayor que 1 pq el del character siempre está
-    -- TODO: gestionar colisióoes
-        print(collisions[1])
-    end
-end
-
 
 -- Sprite
 function CharacterEntity.loadSprite(self, imagePath)
@@ -45,11 +35,9 @@ end
 
 -- Collider
 function CharacterEntity.loadCollider(self)
-    -- TODO usar aquí nuestra clase CollisionBox
     local x,  y = self:getPosition()
-    self.collider = CollisionBox(x+8, y+8, 16, 16, "CharacterCollision", "static")
+    self.collider = CollisionBox("rectangular", x+8, y+8, 16, 16, "CharacterCollision", "static")
 end
-
 
 -- State machine
 function CharacterEntity.loadStateMachine(self)

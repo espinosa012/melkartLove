@@ -2,8 +2,8 @@
 CollisionHandler = Object.extend(Object)
 
 function CollisionHandler.new(self)
-    self.windfield = require "src.lbr.windfield"
-    self.world = self.windfield.newWorld()
+    local windfield = require "src.lbr.windfield"
+    self.world = windfield.newWorld()
     self:loadCollisionClasses()
 end
 
@@ -29,4 +29,3 @@ end
 function CollisionHandler.queryRectangleArea(self, x, y, h, w, collisionClasses)
     return self.world:queryRectangleArea(x, y, h, w, collisionClasses)
 end
-
