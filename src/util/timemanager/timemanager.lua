@@ -1,5 +1,4 @@
 --! file: timemanager.lua
-
 _G.TimeManager = Object.extend(Object)
 
 -- TODO: para gestionar el tiempo en el juego, timestamp, etc.
@@ -25,7 +24,11 @@ function TimeManager.start(self)
 end
 
 function TimeManager.pause(self)
-    self.isActive = false    
+    self.isActive = false
+end
+
+function TimeManager.togglePause(self)
+    self.isActive = not self.isActive
 end
 
 function TimeManager.stop(self)

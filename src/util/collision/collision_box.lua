@@ -8,8 +8,8 @@ _G.CollisionBox = Object.extend(Object)
 -- TODO: podríamos pasarle la función que ueremos que se ejecute al deteectar coliksión...
 function CollisionBox.new(self, x, y, width, height, collisionClass, type)
     self.collider = nil
-    self.x = nil
-    self.y = nil
+    self.x = x
+    self.y = y
     self.width = width
     self.height = height
     if collisionClass then self.collisionClass = collisionClass else self.collisionClass = nil end

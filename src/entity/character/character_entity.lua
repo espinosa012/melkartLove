@@ -2,6 +2,7 @@
 require "src.entity.base_entity"
 require "src.util.sprite.sprite"
 require "src.util.statemachine.character_state_machine"
+require "src.util.collision.collision_box"
 
 _G.CharacterEntity = Object.extend(GameEntity)
 
@@ -46,9 +47,7 @@ end
 function CharacterEntity.loadCollider(self)
     -- TODO usar aquí nuestra clase CollisionBox
     local x,  y = self:getPosition()
-    self.collider = collisionHandler:newRectangleCollider(x+8, y+8, 16, 16) -- TODO: pruebas, configurar en función del character
-    self.collider:setType("static")
-    self.collider:setCollisionClass("CharacterCollision")
+    self.collider = CollisionBox(x+8, y+8, 16, 16, "CharacterCollision", "static")
 end
 
 

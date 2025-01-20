@@ -15,9 +15,11 @@ require "src.util.statemachine.state"
 require "src.util.event.key"
 require "src.util.collision.collision_handler"
 require "src.util.timemanager.timemanager"
+require "src.util.collision.collision_handler"
 
 _G.worldSize = Vector2(512, 512)
 _G.worldCellSize = 16    -- para casillas del tilemap, movimiento, etc.
+
 
 local sceneObjects = {} -- almacenamos los distintos objetos de la escena (personajes, npcs, items, etc)
 
@@ -26,6 +28,7 @@ local characterController = CharacterController()
 local cameraController = CameraController()
 
 -- COLLISIONS (Se podría meter en nuestro collisionHandler)
+_G.collisionHandler = CollisionHandler()
 -- añadir otro collider al character para interacciones (CharacterInteractionCollider)
 
 -- TIME MANAGER 
@@ -55,6 +58,7 @@ function love.update(dt)
     for index, character in ipairs(characterController.availableCharacters.items) do
 		character:update(dt)
 	end	-- TODO: mejora, quitar de aquí
+
     collisionHandler:update(dt)
     tileMap:update(dt)
     timeManager:update(dt)

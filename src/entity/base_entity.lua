@@ -47,7 +47,7 @@ function GameEntity.setPosition(self, x, y)
 end
 
 function GameEntity.setColliderPosition(self, x, y)
-    self.collider.body:setPosition(x, y)    -- TODO: igual esto debería ir en nuestro CollisionHandler
+    self.collider:setPosition(x, y)    -- TODO: igual esto debería ir en nuestro CollisionHandler
 end
 
 function GameEntity.setSpritePosition(self, x, y)
