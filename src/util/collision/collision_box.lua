@@ -21,12 +21,24 @@ function CollisionBox.new(self, shape, x, y, width, height, collisionClass, type
     -- TODO: es mejorable...
 end
 
+function CollisionBox.setObject(self, gameEntity)
+    self.collider:setObject(gameEntity)
+end
+
 function CollisionBox.setRectangularCollider(self, x, y)
     self.collider = collisionHandler:newRectangleCollider(self.x, self.y, self.width, self.height)
     self.collider:setType(self.colliderType)
     self:setPosition(x, y)
     if self.collisionClass then self.collider:setCollisionClass(self.collisionClass) end
 end
+
+function CollisionBox.setCircularCollider(self, x, y)
+    self.collider = collisionHandler:newRectangleCollider(self.x, self.y, self.width, self.height)
+    self.collider:setType(self.colliderType)
+    self:setPosition(x, y)
+    if self.collisionClass then self.collider:setCollisionClass(self.collisionClass) end
+end
+
 
 function CollisionBox.setPosition(self, x, y)
     self.x = x
@@ -43,23 +55,35 @@ function CollisionBox.update(self, dt)  -- debe recibir dt??
     local collisions = self:getCollisions()
     if not collisions then return end
 
+    -- TODO: el problema con esto es que no tenemos referencia a la entidad propietaria del collider detectado
+
     -- TODO: gestionar las colisiones en función  del tipo, etc
-    for i=1, #collisions do
-        print(collisions[i])
-    end
+    -- for i=1, #collisions do
+    --     print(collisions[i])
+    -- end
+    -- TODO: usar el módulo de eventos, pasando funciones y argumentos, para gestionar las colisiones
 end 
 
 
 --- devuelve una lista con todas las colisiones actuales
 function CollisionBox.getCollisions(self)
+    -- TODO: se debe optimizar. podríamos llamar a este desde el update del character para poder referenciarlo en la gestión de la colisión
     local x, y = self:getPosition()
-    local collisions = collisionHandler:queryRectangleArea(x, y, worldCellSize/2, worldCellSize/2, {"CharacterCollision"})   -- TODO: las detecta siempre, quizás detecte la propia
+    local collisions = collisionHandler:queryRectangleArea(x, y, worldCellSize/2, worldCellSize/2, {"CharacterCollision"})   
     if #collisions <= 1 then return nil end
 
     local detectedColls = List()
     for i=2, #collisions do detectedColls:add(collisions[i]) end
-    return detectedColls.items
+    return detectedColls.items -- TODO: cuidado, porque lo que devuelve no son CollisionBox de las nuestras, 
+    -- sino las propias de windfield, de las cuales podremos obtener cierta información interesante.
+    -- podríamos convertirlas en CollisionBoxes de las nuestras
+    -- hacer bien, porque tendremos que gestionarlas luego para las interaciones, etc
 end
 
+-- TODO: hay que hacer que se puedan tener collider de tipo dynamic y que cuando cambie la posición del 
+-- collider por interacciones físicas, se actualicen las posiciones del character o entidad correspondiente y de su sprite si lo tiene
+--  habrá que tener una referencia a la entidad propietaria de la collision box
 
--- TODO: usar el módulo de eventos, pasando funciones y argumentos, para gestionar las colisiones
+-- TODO: penmsar en collisionBox para edificios, quizá una individual poara cada vloque cuadrado del edificio, o intenetar hacer más eficiente.
+
+-- todo: INVESTIGAR RAYCAST

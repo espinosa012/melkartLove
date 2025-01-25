@@ -30,6 +30,9 @@ local cameraController = CameraController()
 -- COLLISIONS (Se podría meter en nuestro collisionHandler)
 _G.collisionHandler = CollisionHandler()
 -- añadir otro collider al character para interacciones (CharacterInteractionCollider)
+-- podríamos usar otro gestior de colisiones (otro world) sólo para los botones de la interfaz, o para cada menú...
+-- de hecho, podríamos usar un handler distinto para cada "capa" en la que queremos englobar elementos que puedan 
+-- interactuar entre ellos, así, las queries serían más eficientes.
 
 -- TIME MANAGER 
 _G.timeManager = TimeManager()
@@ -46,9 +49,11 @@ local testCharacter3 = CharacterEntity(_G.tileMap:mapToWorldPosition(9, 12))
 
 
 function love.load()
+    -- TODO: testing
     characterController:addCharacter(testCharacter)
     characterController:addCharacter(testCharacter2)
     characterController:addCharacter(testCharacter3)
+
     tileMap:load()
     timeManager:start()
 end
@@ -57,7 +62,7 @@ function love.update(dt)
     characterController:update(dt)    -- TODO: no hay que actualizar los personajes individualmente, sino el manager, controller o como lo hagamos
     for index, character in ipairs(characterController.availableCharacters.items) do
 		character:update(dt)
-	end	-- TODO: mejora, quitar de aquí
+	end	-- TODO: mejora, quitar de aquí, quizás llevar al controller
 
     collisionHandler:update(dt)
     tileMap:update(dt)

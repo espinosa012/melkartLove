@@ -1,4 +1,4 @@
---! file: base_entity.lua
+--! file: game_entity.lua
 GameEntity = _G.Object.extend(Object)
 
 function GameEntity.new(self)
@@ -43,11 +43,11 @@ function GameEntity.setPosition(self, x, y)
     -- udpating sprite position
     self:setSpritePosition(x, y)
     -- udpating collider position
-    self:setColliderPosition(x+8, y+8)  -- TODO: el 8 a pelo son pruebas por el tamaño del sprite, guardar en variable en función de características del character
+    self:setColliderPosition(x, y)
 end
 
 function GameEntity.setColliderPosition(self, x, y)
-    self.collider:setPosition(x, y)    -- TODO: igual esto debería ir en nuestro CollisionHandler
+    self.collider:setPosition(x+worldCellSize/2, y+worldCellSize/2)    -- TODO: igual esto debería ir en nuestro CollisionHandler
 end
 
 function GameEntity.setSpritePosition(self, x, y)
