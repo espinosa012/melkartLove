@@ -1,11 +1,20 @@
 --! file: game_entity.lua
+_G.entityIdCounter = 1
+
 GameEntity = _G.Object.extend(Object)
 
 function GameEntity.new(self)
+    self.entityId = nil
+    self:setId()
 	self.state_machine = nil
     self.sprite = nil
     self.collider = nil
     self.name = ""
+end
+
+function GameEntity.setId(self) -- autoincrement
+    self.entityId = entityIdCounter
+    _G.entityIdCounter = entityIdCounter + 1
 end
 
 -- love2D functions
@@ -55,4 +64,8 @@ function GameEntity.setSpritePosition(self, x, y)
     self.sprite.posY = y
 end
 
+
+function GameEntity.getCollider(self)
+    return self.collider
+end
 

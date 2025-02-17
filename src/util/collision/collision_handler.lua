@@ -40,10 +40,30 @@ end
 
 -- Handling entity collisions
 function CollisionHandler.handleCollisions(self, gameEntity)
-    local detectedCollisions = gameEntity.collider:getCollisions()
-    if not detectedCollisions then return end
-    for i = 1, #detectedCollisions do
+    local detectedColls = gameEntity.collider:getCollisions()
+    if not detectedColls then return end
+    
+    -- TODO: recorremos las colisiones detectadas y, en cada iteración, comprobamos si están en la lista de colisiones de la entidad.
+    -- Si no lo está, la añadimos y gestionamos la colisión
+    for i = 1, #detectedColls do
+        local detectedEntityId = detectedColls[i]:getObject().entityId
+        if not gameEntity.collider.collidingEntities:find(detectedEntityId) then
+            print(detectedEntityId)
+            gameEntity.collider.collidingEntities:add(detectedEntityId)
+        end
+
         -- TODO: gestionar las colisiones de la entidad que reciba. emitir evento, etc
-        print(detectedCollisions[i]:getObject().name)
     end
+
+    -- TODO: ver también qué colisiones hay que quitar
+end
+
+
+function CollisionHandler.checkCollisions(self, coll, entityCollisions)
+    for j = 1, #entityCollisions do
+        if coll == entityCollisions[j] then
+            return true
+        end
+    end
+    return false
 end

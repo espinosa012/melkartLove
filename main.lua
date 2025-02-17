@@ -44,8 +44,11 @@ _G.eventHandler = EventHandler()
 
 -- TESTING
 local testCharacter = CharacterEntity(_G.tileMap:mapToWorldPosition(0, 0))
+testCharacter.name = "char1"
 local testCharacter2 = CharacterEntity(_G.tileMap:mapToWorldPosition(4, 4))
+testCharacter2.name = "char2"
 local testCharacter3 = CharacterEntity(_G.tileMap:mapToWorldPosition(9, 12))
+testCharacter3.name = "char3"
 
 
 function love.load()

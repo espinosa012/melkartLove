@@ -6,9 +6,10 @@ require "src.util.collision.collision_box"
 
 _G.CharacterEntity = Object.extend(GameEntity)
 
-function CharacterEntity.new(self, posX, posY)
+function CharacterEntity.new(self, posX, posY, name)
     -- TODO: llevar a un componente de atributos de este tipo
-    self.name = "Test"
+    GameEntity.new(self)
+    if name then self.name = name else self.name = "unamed" end
     self.movementSpeed = 2  -- px per frame
 
     self:loadSprite("resources/character.png")  -- TODO: test, quitar
@@ -29,9 +30,7 @@ end
 
 function CharacterEntity.setPosition(self, x, y)
     GameEntity.setPosition(self, x, y)
-
 end
-
 
 -- Sprite
 function CharacterEntity.loadSprite(self, imagePath)
@@ -42,13 +41,12 @@ end
 -- Collider
 function CharacterEntity.loadCollider(self)
     local x,  y = self:getPosition()
-    self.collider = CollisionBox("rectangular", x+8, y+8, 16, 16, "CharacterCollision", "static")
-    self.collider:setObject(self)
+    self.collider = CollisionBox(self, "rectangular", x+worldCellSize/2, y+worldCellSize/2, worldCellSize, worldCellSize, "CharacterCollision", "static")
 end
 
 function CharacterEntity.handleCollisions(self, dt)
-    self.collider:update(dt)
-    collisionHandler:handleCollisions(self)
+    self.collider:update(dt)    -- actualizamos la collision box para setear sus colisiones en el momento del frame
+    collisionHandler:handleCollisions(self) -- llamamos al método de gestión de colisiones del personaje ya con las colisiones actualizadas
 end
 
 -- State machine
